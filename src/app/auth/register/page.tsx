@@ -23,6 +23,7 @@ export default function RegisterPage() {
     confirmPassword: '',
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
+  const [hasSubmitted, setHasSubmitted] = useState(false)
   
   const router = useRouter()
   const { toast } = useToast()
@@ -57,6 +58,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setHasSubmitted(true)
     
     if (!validateForm()) return
     
@@ -72,6 +74,7 @@ export default function RegisterPage() {
           username: formData.username,
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.confirmPassword,
         }),
       })
       
@@ -309,9 +312,7 @@ export default function RegisterPage() {
               )}
             </div>
             
-            <div className="text-xs text-muted-foreground">
-              Password must contain at least 8 characters with uppercase, lowercase, and numbers.
-            </div>
+
             
             <Button
               type="submit"

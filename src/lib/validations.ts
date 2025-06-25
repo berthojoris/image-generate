@@ -10,8 +10,7 @@ export const userRegistrationSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
+    .min(1, 'Password is required'),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -41,8 +40,7 @@ export const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),
   newPassword: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, 'Password must contain at least one lowercase letter, one uppercase letter, and one number'),
+    .min(1, 'Password is required'),
   confirmPassword: z.string(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
   message: "Passwords don't match",
