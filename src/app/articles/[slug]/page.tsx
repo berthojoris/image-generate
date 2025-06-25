@@ -145,7 +145,7 @@ npm run dev
 
 Next.js 15 and React 19 represent a significant step forward in web development. The combination of these technologies provides developers with powerful tools to build fast, scalable, and maintainable applications.
 
-Start exploring these new features today and see how they can improve your development workflow and application performance.",
+Start exploring these new features today and see how they can improve your development workflow and application performance.`,
     excerpt: "Learn how to build modern web applications with the latest features in Next.js 15 and React 19, including server components and improved performance.",
     headerImage: "/api/placeholder/1200/600",
     views: 1234,
@@ -283,7 +283,7 @@ export async function POST(request: NextRequest) {
 
 ## Conclusion
 
-Prisma and SQLite provide a powerful combination for building scalable APIs. The type safety and ease of use make it an excellent choice for modern applications.",
+Prisma and SQLite provide a powerful combination for building scalable APIs. The type safety and ease of use make it an excellent choice for modern applications.`,
     excerpt: "Discover best practices for creating robust database schemas and efficient queries using Prisma ORM with SQLite for your applications.",
     headerImage: "/api/placeholder/1200/600",
     views: 856,
@@ -574,7 +574,6 @@ export default function ArticlePage({ params }: ArticlePageProps) {
 
           {/* Related Articles */}
           <RelatedArticles currentSlug={article.slug} />
-        </div>
         </div>
       </div>
 
