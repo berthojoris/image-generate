@@ -409,9 +409,10 @@ function RelatedArticles({ currentSlug }: { currentSlug: string }) {
   );
 }
 
-export default function ArticlePage({ params }: ArticlePageProps) {
+export default async function ArticlePage({ params }: ArticlePageProps) {
   // Find the article by slug
-  const article = mockArticles.find(a => a.slug === params.slug);
+  const { slug } = await params;
+  const article = mockArticles.find(a => a.slug === slug);
 
   if (!article) {
     notFound();
@@ -601,7 +602,8 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ArticlePageProps) {
-  const article = mockArticles.find(a => a.slug === params.slug);
+  const { slug } = await params;
+  const article = mockArticles.find(a => a.slug === slug);
   
   if (!article) {
     return {
