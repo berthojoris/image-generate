@@ -123,7 +123,11 @@
 - [x] Persist theme preference in localStorage
 
 ## Additional Features
-- [ ] Search functionality
+- [x] Search functionality
+  - [x] Search API endpoint with full-text search
+  - [x] Search input component with real-time suggestions
+  - [x] Debounced search with keyboard navigation
+  - [x] Tag-based filtering and pagination support
 - [ ] Article tags/categories
 - [ ] Related articles section
 - [ ] RSS feed generation
