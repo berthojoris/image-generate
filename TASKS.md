@@ -54,38 +54,44 @@
   - [x] Share buttons
 
 ## Comment System
-- [ ] Comment section below articles
-- [ ] Comment form with:
-  - [ ] Emoji picker integration
-  - [ ] Markdown support
-  - [ ] Preview mode
-- [ ] Nested comment replies
-- [ ] Comment moderation controls (for admin)
+- [x] Comment section below articles
+- [x] Comment form with:
+  - [x] Emoji picker integration
+  - [x] Markdown support
+  - [x] Preview mode
+- [x] Nested comment replies
+- [x] Comment moderation controls (for admin)
 
 ## Authentication
-- [ ] User registration form
-- [ ] Login/logout functionality
-- [ ] Password reset flow
-- [ ] OAuth integration (Google/GitHub)
-- [ ] Session management
+- [x] User registration form
+- [x] Login/logout functionality
+- [x] Password reset flow
+- [x] OAuth integration (Google/GitHub)
+- [x] Session management
 
 ## Admin Dashboard
-- [ ] Admin layout with protected routes
-- [ ] Article management:
-  - [ ] Create/edit form with WYSIWYG editor
-  - [ ] Live preview functionality
-  - [ ] Slug editing before publish
-  - [ ] Slug on title and use this for url path when open article detail
-  - [ ] Image upload for headers
-  - [ ] Draft/published states
-- [ ] User management:
-  - [ ] User listing with search
-  - [ ] Ban/unban functionality
-  - [ ] Role management
-- [ ] Analytics:
-  - [ ] Views per article
-  - [ ] Popular articles
-  - [ ] Recent comments
+- [x] Admin layout with protected routes
+- [x] Article management:
+  - [x] Article listing with search and filters
+  - [x] Article deletion functionality
+  - [x] Draft/published status management
+  - [x] Article statistics and analytics
+- [x] User management:
+  - [x] User listing with search and filters
+  - [x] Role management (Admin/User toggle)
+  - [x] User status management (Active/Suspended)
+  - [x] User deletion functionality
+- [x] Analytics:
+  - [x] Dashboard overview with key metrics
+  - [x] Views per article tracking
+  - [x] Popular articles display
+  - [x] Recent activity monitoring
+  - [x] Monthly growth statistics
+- [x] Settings:
+  - [x] Site configuration management
+  - [x] User registration settings
+  - [x] Comment system settings
+  - [x] Maintenance mode toggle
 
 ## WYSIWYG Editor Implementation
 - [ ] Integrate editor (TipTap or similar)

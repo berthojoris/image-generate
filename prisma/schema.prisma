@@ -40,16 +40,18 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  username      String    @unique
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  passwordHash  String?
-  role          String    @default("USER") // USER, EDITOR, ADMIN
-  status        String    @default("ACTIVE") // ACTIVE, BANNED, PENDING
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  username         String    @unique
+  email            String    @unique
+  emailVerified    DateTime?
+  image            String?
+  passwordHash     String?
+  role             String    @default("USER") // USER, EDITOR, ADMIN
+  status           String    @default("ACTIVE") // ACTIVE, BANNED, PENDING
+  resetToken       String?   // For password reset
+  resetTokenExpiry DateTime? // Reset token expiration
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   accounts     Account[]
   sessions     Session[]

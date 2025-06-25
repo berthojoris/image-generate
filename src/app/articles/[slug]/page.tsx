@@ -1,9 +1,11 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Calendar, Eye, Clock, Share2, ArrowLeft, User, Tag } from "lucide-react";
+import { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import { Calendar, Eye, Clock, Share2, Twitter, Facebook, Linkedin, Link2, ArrowLeft, User, Tag } from "lucide-react";
+import { CommentSection } from "@/components/ui/comment-section";
 import "highlight.js/styles/github-dark.css";
 
 // Mock data - will be replaced with real database queries
@@ -569,6 +571,19 @@ export default function ArticlePage({ params }: ArticlePageProps) {
           {/* Related Articles */}
           <RelatedArticles currentSlug={article.slug} />
         </div>
+        </div>
+      </div>
+
+      {/* Comment Section */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <CommentSection 
+          articleId={article.id}
+          currentUser={{
+            id: "current-user",
+            name: "Current User",
+            avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face"
+          }}
+        />
       </div>
     </div>
   );
