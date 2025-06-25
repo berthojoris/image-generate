@@ -37,22 +37,21 @@
 - [x] Build loading skeleton components
 - [x] Implement toast notification system
 - [x] Implement loading system bar using js for progress when ajax call to server
-- [ ] For every loading data or element on website, use nextjs React Suspense loading.js
 
 ## Article Features
-- [ ] Article listing page with pagination (10 articles per page)
-- [ ] Article card component with:
-  - [ ] Featured image
-  - [ ] Title/excerpt
-  - [ ] View count
-  - [ ] Date
-  - [ ] Read time estimate
-- [ ] Article detail page with:
-  - [ ] Proper markdown rendering
-  - [ ] Syntax highlighting for code blocks
-  - [ ] Responsive images
-  - [ ] View counter
-  - [ ] Share buttons
+- [x] Article listing page with pagination (10 articles per page)
+- [x] Article card component with:
+  - [x] Featured image
+  - [x] Title/excerpt
+  - [x] View count
+  - [x] Date
+  - [x] Read time estimate
+- [x] Article detail page with:
+  - [x] Proper markdown rendering
+  - [x] Syntax highlighting for code blocks
+  - [x] Responsive images
+  - [x] View counter
+  - [x] Share buttons
 
 ## Comment System
 - [ ] Comment section below articles
