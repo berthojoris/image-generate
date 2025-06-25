@@ -27,7 +27,7 @@ Next.js 15 introduces several groundbreaking features:
 
 The App Router has been significantly improved with better performance and new capabilities:
 
-\`\`\`typescript
+\\\`\\\`\\\`typescript
 // app/layout.tsx
 export default function RootLayout({
   children,
@@ -42,13 +42,13 @@ export default function RootLayout({
     </html>
   );
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ### 2. Server Components by Default
 
 Server Components are now the default, providing better performance and SEO:
 
-\`\`\`tsx
+\\\`\\\`\\\`tsx
 // This is a Server Component by default
 export default async function HomePage() {
   const data = await fetch('https://api.example.com/data');
@@ -65,7 +65,7 @@ export default async function HomePage() {
     </div>
   );
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ### 3. Improved Performance
 
@@ -83,7 +83,7 @@ React 19 brings powerful new features that work seamlessly with Next.js:
 
 Actions provide a new way to handle form submissions and mutations:
 
-\`\`\`tsx
+\\\`\\\`\\\`tsx
 function ContactForm() {
   async function submitForm(formData: FormData) {
     'use server';
@@ -103,13 +103,13 @@ function ContactForm() {
     </form>
   );
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ### 2. use() Hook
 
-The new \`use()\` hook allows you to read promises and context in components:
+The new \\\`use()\\\` hook allows you to read promises and context in components:
 
-\`\`\`tsx
+\\\`\\\`\\\`tsx
 import { use } from 'react';
 
 function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
@@ -122,17 +122,17 @@ function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
     </div>
   );
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ## Getting Started
 
 To create a new Next.js 15 project with React 19:
 
-\`\`\`bash
+\\\`\\\`\\\`bash
 npx create-next-app@latest my-app
 cd my-app
 npm run dev
-\`\`\`
+\\\`\\\`\\\`
 
 ## Best Practices
 
@@ -180,16 +180,16 @@ This combination offers several advantages:
 
 First, install Prisma:
 
-\`\`\`bash
+\\\`\\\`\\\`bash
 npm install prisma @prisma/client
 npx prisma init --datasource-provider sqlite
-\`\`\`
+\\\`\\\`\\\`
 
 ## Database Schema
 
-Define your schema in \`prisma/schema.prisma\`:
+Define your schema in \\\`prisma/schema.prisma\\\`:
 
-\`\`\`prisma
+\\\`\\\`\\\`prisma
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -207,13 +207,13 @@ model Post {
   authorId  String
   createdAt DateTime @default(now())
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ## API Routes
 
 Create API routes using Prisma:
 
-\`\`\`typescript
+\\\`\\\`\\\`typescript
 // app/api/posts/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
@@ -271,7 +271,7 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-\`\`\`
+\\\`\\\`\\\`
 
 ## Best Practices
 
