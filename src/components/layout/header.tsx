@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, X, User, LogOut, Settings, PenTool } from "lucide-react";
+import { Menu, X, User, LogOut, Settings, PenTool, Edit } from "lucide-react";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -56,8 +56,17 @@ export function Header() {
             </NavigationMenu.List>
           </NavigationMenu.Root>
 
-          {/* Right side - Theme toggle and Auth */}
+          {/* Right side - Write, Theme toggle and Auth */}
           <div className="flex items-center space-x-4">
+            {session && (
+              <Link
+                href="/write"
+                className="hidden sm:flex items-center space-x-1 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
+              >
+                <Edit className="h-4 w-4" />
+                <span>Write</span>
+              </Link>
+            )}
             <ThemeToggle />
             
             {status === "loading" ? (
@@ -85,6 +94,15 @@ export function Header() {
                     className="min-w-[200px] rounded-md border border-gray-200 bg-white p-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
                     sideOffset={5}
                   >
+                    <DropdownMenu.Item asChild>
+                      <Link
+                        href="/write"
+                        className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 sm:hidden"
+                      >
+                        <Edit className="h-4 w-4" />
+                        <span>Write Article</span>
+                      </Link>
+                    </DropdownMenu.Item>
                     <DropdownMenu.Item asChild>
                       <Link
                         href="/profile"
@@ -162,6 +180,15 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+              {session && (
+                <Link
+                  href="/write"
+                  className="block px-3 py-2 text-base font-medium text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Write Article
+                </Link>
+              )}
             </div>
           </div>
         )}

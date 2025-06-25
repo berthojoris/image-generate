@@ -94,17 +94,23 @@
   - [x] Maintenance mode toggle
 
 ## WYSIWYG Editor Implementation
-- [ ] Integrate editor (TipTap or similar)
-- [ ] Configure toolbar with:
-  - [ ] Text formatting
-  - [ ] Headers
-  - [ ] Lists
-  - [ ] Code blocks
-  - [ ] Image upload
-  - [ ] Tables
-  - [ ] Markdown shortcuts
-- [ ] Implement draft saving
-- [ ] Add word count/read time estimation
+- [x] Integrate editor (TipTap or similar)
+- [x] Configure toolbar with:
+  - [x] Text formatting
+  - [x] Headers
+  - [x] Lists
+  - [x] Code blocks
+  - [x] Image upload
+  - [x] Tables
+  - [x] Markdown shortcuts
+- [x] Implement draft saving
+- [x] Add word count/read time estimation
+- [x] Create article creation page (/write)
+- [x] Create article editing page (/articles/[slug]/edit)
+- [x] Implement editor selector (WYSIWYG vs Markdown)
+- [x] Add API routes for article CRUD operations
+- [x] Integrate edit button in article view for authors
+- [x] Add "Write" navigation link for authenticated users
 
 ## Theme System
 - [x] Implement light/dark theme toggle

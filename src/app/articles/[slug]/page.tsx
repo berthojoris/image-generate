@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import { Calendar, Eye, Clock, Share2, Twitter, Facebook, Linkedin, Link2, ArrowLeft, User, Tag } from "lucide-react";
 import { CommentSection } from "@/components/ui/comment-section";
+import { ArticleEditButton } from "@/components/ui/article-edit-button";
 import "highlight.js/styles/github-dark.css";
 
 // Mock data - will be replaced with real database queries
@@ -491,7 +492,10 @@ export default function ArticlePage({ params }: ArticlePageProps) {
                     <span>{article.views.toLocaleString()} views</span>
                   </div>
                 </div>
-                <ShareButtons title={article.title} slug={article.slug} />
+                <div className="flex items-center gap-3">
+                  <ArticleEditButton articleSlug={article.slug} authorId={article.author.id} />
+                  <ShareButtons title={article.title} slug={article.slug} />
+                </div>
               </div>
             </div>
           </header>
