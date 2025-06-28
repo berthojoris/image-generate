@@ -43,7 +43,8 @@ export default function WritePage() {
     excerpt: '',
     content: '',
     tags: [],
-    status: 'DRAFT'
+    status: 'DRAFT',
+    featuredImage: ''
   })
 
   // Redirect if not authenticated

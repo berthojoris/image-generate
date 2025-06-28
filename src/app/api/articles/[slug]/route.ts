@@ -28,18 +28,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         author: {
           select: {
             id: true,
-            name: true,
+            username: true,
             email: true,
             image: true
           }
         },
-        tags: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
         comments: {
           include: {
             author: {
               select: {
                 id: true,
-                name: true,
+                username: true,
                 image: true
               }
             }
@@ -49,7 +53,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         _count: {
           select: {
             comments: true,
-            likes: true
+
           }
         }
       }
@@ -159,13 +163,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Handle tags
     if (validatedData.tags) {
+      // First delete all existing tag connections
+      await db.articleTag.deleteMany({
+        where: { articleId: existingArticle.id }
+      })
+      
+      // Then create new tag connections
       updateData.tags = {
-        set: [], // Clear existing tags
-        connectOrCreate: validatedData.tags.map(tagName => ({
-          where: { name: tagName },
-          create: {
-            name: tagName,
-            slug: tagName.toLowerCase().replace(/\s+/g, '-')
+        create: validatedData.tags.map(tagName => ({
+          tag: {
+            connectOrCreate: {
+              where: { name: tagName },
+              create: {
+                name: tagName,
+                slug: tagName.toLowerCase().replace(/\s+/g, '-')
+              }
+            }
           }
         }))
       }
@@ -179,12 +192,16 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         author: {
           select: {
             id: true,
-            name: true,
+            username: true,
             email: true,
             image: true
           }
         },
-        tags: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
         _count: {
           select: {
             comments: true,

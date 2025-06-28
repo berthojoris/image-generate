@@ -9,7 +9,7 @@ const createArticleSchema = z.object({
   slug: z.string().min(1, 'Slug is required'),
   excerpt: z.string().max(500, 'Excerpt too long').optional(),
   content: z.string().min(1, 'Content is required'),
-  featuredImage: z.string().url().optional().or(z.literal('')),
+  featuredImage: z.string().url().optional().or(z.literal('')).or(z.undefined()).transform(val => val || null),
   tags: z.array(z.string()).default([]),
   status: z.enum(['DRAFT', 'PUBLISHED']).default('DRAFT')
 })
@@ -62,16 +62,19 @@ export async function POST(request: NextRequest) {
         slug: validatedData.slug,
         excerpt: validatedData.excerpt || '',
         content: validatedData.content,
-        featuredImage: validatedData.featuredImage || null,
-        status: validatedData.status,
+        headerImage: validatedData.featuredImage || null,
+        published: validatedData.status === 'PUBLISHED',
         authorId: session.user.id,
-        publishedAt: validatedData.status === 'PUBLISHED' ? new Date() : null,
         tags: {
-          connectOrCreate: validatedData.tags.map(tagName => ({
-            where: { name: tagName },
-            create: {
-              name: tagName,
-              slug: tagName.toLowerCase().replace(/\s+/g, '-')
+          create: validatedData.tags.map(tagName => ({
+            tag: {
+              connectOrCreate: {
+                where: { name: tagName },
+                create: {
+                  name: tagName,
+                  slug: tagName.toLowerCase().replace(/\s+/g, '-')
+                }
+              }
             }
           }))
         }
@@ -80,16 +83,19 @@ export async function POST(request: NextRequest) {
         author: {
           select: {
             id: true,
-            name: true,
+            username: true,
             email: true,
             image: true
           }
         },
-        tags: true,
+        tags: {
+          include: {
+            tag: true
+          }
+        },
         _count: {
           select: {
-            comments: true,
-            likes: true
+            comments: true
           }
         }
       }
@@ -144,7 +150,9 @@ export async function GET(request: NextRequest) {
     if (query.tag) {
       where.tags = {
         some: {
-          name: { equals: query.tag, mode: 'insensitive' }
+          tag: {
+            name: { equals: query.tag, mode: 'insensitive' }
+          }
         }
       }
     }
@@ -152,7 +160,7 @@ export async function GET(request: NextRequest) {
     if (query.author) {
       where.author = {
         OR: [
-          { name: { contains: query.author, mode: 'insensitive' } },
+          { username: { contains: query.author, mode: 'insensitive' } },
           { email: { contains: query.author, mode: 'insensitive' } }
         ]
       }
@@ -166,16 +174,20 @@ export async function GET(request: NextRequest) {
           author: {
             select: {
               id: true,
-              name: true,
+              username: true,
               email: true,
               image: true
             }
           },
-          tags: true,
+          tags: {
+            include: {
+              tag: true
+            }
+          },
           _count: {
             select: {
               comments: true,
-              likes: true
+
             }
           }
         },
