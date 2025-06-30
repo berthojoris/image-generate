@@ -22,6 +22,7 @@ export default function LoginPage() {
   const { toast } = useToast()
   const callbackUrl = searchParams.get('callbackUrl') || '/'
   const error = searchParams.get('error')
+  const message = searchParams.get('message')
 
   // Show error message if there's an auth error
   if (error) {
@@ -41,6 +42,15 @@ export default function LoginPage() {
     toast({
       title: 'Authentication Error',
       description: errorMessages[error] || 'An error occurred during authentication',
+      variant: 'destructive',
+    })
+  }
+
+  // Show message if there's a custom message (like session expiry)
+  if (message) {
+    toast({
+      title: 'Session Expired',
+      description: message,
       variant: 'destructive',
     })
   }

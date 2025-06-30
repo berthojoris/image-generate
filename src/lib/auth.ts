@@ -11,6 +11,7 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db) as any,
   session: {
     strategy: 'jwt',
+    maxAge: 2 * 60 * 60, // 2 hours in seconds
   },
   pages: {
     signIn: '/auth/login',
@@ -78,12 +79,26 @@ export const authOptions: NextAuthOptions = {
         token.role = user.role
         token.status = user.status
         token.username = user.username
+        // Set login time for session tracking
+        token.loginTime = Date.now()
       }
 
       // Handle session update
       if (trigger === 'update' && session) {
         token.username = session.username
         token.image = session.image
+      }
+
+      // Check if admin session has expired (2 hours)
+      if (token.role === 'ADMIN' && token.loginTime) {
+        const now = Date.now()
+        const sessionDuration = now - (token.loginTime as number)
+        const twoHours = 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+        
+        if (sessionDuration > twoHours) {
+          // Session expired, return null to force logout
+          return null
+        }
       }
 
       return token
@@ -182,4 +197,22 @@ export async function requireRole(requiredRole: 'USER' | 'EDITOR' | 'ADMIN') {
   }
   
   return session
+}
+
+// Helper function to check if admin session is still valid
+export async function checkAdminSessionValidity() {
+  const session = await getServerSession()
+  
+  if (!session?.user) {
+    return false
+  }
+  
+  // Only check for admin users
+  if ((session.user as any).role !== 'ADMIN') {
+    return true // Non-admin users don't have session timeout
+  }
+  
+  // For admin users, the JWT callback already handles expiry
+  // If we reach here with a valid session, it means it hasn't expired
+  return true
 }

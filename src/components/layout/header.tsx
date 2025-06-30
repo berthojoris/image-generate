@@ -25,14 +25,14 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:border-gray-800 dark:bg-gray-900/95 dark:supports-[backdrop-filter]:bg-gray-900/60">
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <PenTool className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
+              <PenTool className="h-8 w-8 text-primary" />
+              <span className="text-xl font-bold text-foreground">
                 BlogSpace
               </span>
             </Link>
@@ -46,7 +46,7 @@ export function Header() {
                   <NavigationMenu.Link asChild>
                     <Link
                       href={item.href}
-                      className="text-sm font-medium text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {item.name}
                     </Link>
@@ -61,7 +61,7 @@ export function Header() {
             {session && (
               <Link
                 href="/write"
-                className="hidden sm:flex items-center space-x-1 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors"
+                className="hidden sm:flex items-center space-x-1 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <Edit className="h-4 w-4" />
                 <span>Write</span>
@@ -70,11 +70,11 @@ export function Header() {
             <ThemeToggle />
             
             {status === "loading" ? (
-              <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200 dark:bg-gray-700" />
+              <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
             ) : session ? (
               <DropdownMenu.Root>
                 <DropdownMenu.Trigger asChild>
-                  <button className="flex items-center space-x-2 rounded-full bg-gray-100 p-2 text-sm font-medium text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700">
+                  <button className="flex items-center space-x-2 rounded-full bg-secondary p-2 text-sm font-medium text-secondary-foreground hover:bg-secondary/80">
                     {session.user?.image ? (
                       <img
                         src={session.user.image}
@@ -91,13 +91,13 @@ export function Header() {
                 </DropdownMenu.Trigger>
                 <DropdownMenu.Portal>
                   <DropdownMenu.Content
-                    className="min-w-[200px] rounded-md border border-gray-200 bg-white p-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+                    className="min-w-[200px] rounded-md border border-border bg-popover p-1 shadow-lg"
                     sideOffset={5}
                   >
                     <DropdownMenu.Item asChild>
                       <Link
                         href="/write"
-                        className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 sm:hidden"
+                        className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground sm:hidden"
                       >
                         <Edit className="h-4 w-4" />
                         <span>Write Article</span>
@@ -106,7 +106,7 @@ export function Header() {
                     <DropdownMenu.Item asChild>
                       <Link
                         href="/profile"
-                        className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                        className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground"
                       >
                         <Settings className="h-4 w-4" />
                         <span>Profile</span>
@@ -116,17 +116,17 @@ export function Header() {
                       <DropdownMenu.Item asChild>
                         <Link
                           href="/admin"
-                          className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                          className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-popover-foreground hover:bg-accent hover:text-accent-foreground"
                         >
                           <PenTool className="h-4 w-4" />
                           <span>Admin Dashboard</span>
                         </Link>
                       </DropdownMenu.Item>
                     )}
-                    <DropdownMenu.Separator className="my-1 h-px bg-gray-200 dark:bg-gray-700" />
+                    <DropdownMenu.Separator className="my-1 h-px bg-border" />
                     <DropdownMenu.Item
                       onClick={handleSignOut}
-                      className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+                      className="flex items-center space-x-2 rounded-sm px-3 py-2 text-sm text-destructive hover:bg-destructive/10"
                     >
                       <LogOut className="h-4 w-4" />
                       <span>Sign out</span>
@@ -138,13 +138,13 @@ export function Header() {
               <div className="flex items-center space-x-2">
                 <Link
                   href="/auth/login"
-                  className="text-sm font-medium text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground"
                 >
                   Sign in
                 </Link>
                 <Link
                   href="/auth/register"
-                  className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                  className="rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
                 >
                   Sign up
                 </Link>
@@ -174,7 +174,7 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"
+                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {item.name}
@@ -183,7 +183,7 @@ export function Header() {
               {session && (
                 <Link
                   href="/write"
-                  className="block px-3 py-2 text-base font-medium text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20 dark:hover:text-blue-300"
+                  className="block px-3 py-2 text-base font-medium text-primary hover:bg-primary/10 hover:text-primary"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   Write Article
