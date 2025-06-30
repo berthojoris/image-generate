@@ -4,300 +4,83 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
+import rehypeRaw from "rehype-raw";
 import { Calendar, Eye, Clock, Share2, Twitter, Facebook, Linkedin, Link2, ArrowLeft, User, Tag } from "lucide-react";
 import { CommentSection } from "@/components/ui/comment-section";
 import { ArticleEditButton } from "@/components/ui/article-edit-button";
+import { db } from "@/lib/db";
+import { renderHtmlContent } from "@/lib/utils";
 import "highlight.js/styles/github-dark.css";
 
-// Mock data - will be replaced with real database queries
-const mockArticles = [
-  {
-    id: "1",
-    title: "Getting Started with Next.js 15 and React 19",
-    slug: "getting-started-nextjs-15-react-19",
-    content: `# Getting Started with Next.js 15 and React 19
-
-Next.js 15 brings exciting new features and improvements that make building modern web applications even more powerful and efficient. Combined with React 19, developers now have access to cutting-edge tools for creating exceptional user experiences.
-
-## What's New in Next.js 15
-
-Next.js 15 introduces several groundbreaking features:
-
-### 1. Enhanced App Router
-
-The App Router has been significantly improved with better performance and new capabilities:
-
-\\\`\\\`\\\`typescript
-// app/layout.tsx
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
-      </body>
-    </html>
-  );
-}
-\\\`\\\`\\\`
-
-### 2. Server Components by Default
-
-Server Components are now the default, providing better performance and SEO:
-
-\\\`\\\`\\\`tsx
-// This is a Server Component by default
-export default async function HomePage() {
-  const data = await fetch('https://api.example.com/data');
-  const posts = await data.json();
-  
-  return (
-    <div>
-      {posts.map(post => (
-        <article key={post.id}>
-          <h2>{post.title}</h2>
-          <p>{post.excerpt}</p>
-        </article>
-      ))}
-    </div>
-  );
-}
-\\\`\\\`\\\`
-
-### 3. Improved Performance
-
-Next.js 15 includes several performance optimizations:
-
-- **Faster builds**: Up to 30% faster build times
-- **Better caching**: Improved caching strategies
-- **Optimized bundling**: Smaller bundle sizes
-
-## React 19 Features
-
-React 19 brings powerful new features that work seamlessly with Next.js:
-
-### 1. Actions
-
-Actions provide a new way to handle form submissions and mutations:
-
-\\\`\\\`\\\`tsx
-function ContactForm() {
-  async function submitForm(formData: FormData) {
-    'use server';
-    
-    const name = formData.get('name');
-    const email = formData.get('email');
-    
-    // Handle form submission
-    await saveContact({ name, email });
-  }
-  
-  return (
-    <form action={submitForm}>
-      <input name="name" placeholder="Your name" />
-      <input name="email" type="email" placeholder="Your email" />
-      <button type="submit">Submit</button>
-    </form>
-  );
-}
-\\\`\\\`\\\`
-
-### 2. use() Hook
-
-The new \\\`use()\\\` hook allows you to read promises and context in components:
-
-\\\`\\\`\\\`tsx
-import { use } from 'react';
-
-function UserProfile({ userPromise }: { userPromise: Promise<User> }) {
-  const user = use(userPromise);
-  
-  return (
-    <div>
-      <h1>{user.name}</h1>
-      <p>{user.email}</p>
-    </div>
-  );
-}
-\\\`\\\`\\\`
-
-## Getting Started
-
-To create a new Next.js 15 project with React 19:
-
-\\\`\\\`\\\`bash
-npx create-next-app@latest my-app
-cd my-app
-npm run dev
-\\\`\\\`\\\`
-
-## Best Practices
-
-1. **Use Server Components**: Leverage server components for better performance
-2. **Optimize Images**: Use Next.js Image component for automatic optimization
-3. **Implement Caching**: Use Next.js caching strategies effectively
-4. **Type Safety**: Use TypeScript for better development experience
-
-## Conclusion
-
-Next.js 15 and React 19 represent a significant step forward in web development. The combination of these technologies provides developers with powerful tools to build fast, scalable, and maintainable applications.
-
-Start exploring these new features today and see how they can improve your development workflow and application performance.`,
-    excerpt: "Learn how to build modern web applications with the latest features in Next.js 15 and React 19, including server components and improved performance.",
-    headerImage: "/api/placeholder/1200/600",
-    views: 1234,
-    readTime: 8,
-    createdAt: new Date("2024-01-15"),
-    updatedAt: new Date("2024-01-15"),
-    author: {
-      id: "1",
-      username: "johndoe",
-      email: "john@example.com"
-    },
-    tags: ["Next.js", "React", "Web Development", "TypeScript"]
-  },
-  {
-    id: "2",
-    title: "Building Scalable APIs with Prisma and SQLite",
-    slug: "building-scalable-apis-prisma-sqlite",
-    content: `# Building Scalable APIs with Prisma and SQLite
-
-Prisma is a next-generation ORM that makes database access easy and type-safe. Combined with SQLite, it provides an excellent foundation for building scalable APIs.
-
-## Why Prisma + SQLite?
-
-This combination offers several advantages:
-
-- **Type Safety**: Prisma generates TypeScript types from your schema
-- **Zero Configuration**: SQLite requires no setup
-- **Performance**: Excellent performance for most applications
-- **Simplicity**: Easy to develop and deploy
-
-## Setting Up Prisma
-
-First, install Prisma:
-
-\\\`\\\`\\\`bash
-npm install prisma @prisma/client
-npx prisma init --datasource-provider sqlite
-\\\`\\\`\\\`
-
-## Database Schema
-
-Define your schema in \\\`prisma/schema.prisma\\\`:
-
-\\\`\\\`\\\`prisma
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  username  String   @unique
-  posts     Post[]
-  createdAt DateTime @default(now())
-}
-
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  createdAt DateTime @default(now())
-}
-\\\`\\\`\\\`
-
-## API Routes
-
-Create API routes using Prisma:
-
-\\\`\\\`\\\`typescript
-// app/api/posts/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-
-export async function GET() {
+// Function to get article by slug from database
+async function getArticleBySlug(slug: string) {
   try {
-    const posts = await prisma.post.findMany({
+    const article = await db.article.findFirst({
+      where: {
+        slug: slug,
+        published: true
+      },
       include: {
         author: {
           select: {
+            id: true,
             username: true,
-            email: true
+            email: true,
+            image: true
           }
-        }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-    
-    return NextResponse.json(posts);
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch posts' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function POST(request: NextRequest) {
-  try {
-    const { title, content, authorId } = await request.json();
-    
-    const post = await prisma.post.create({
-      data: {
-        title,
-        content,
-        authorId
-      },
-      include: {
-        author: {
+        },
+        tags: {
+          include: {
+            tag: true
+          }
+        },
+        _count: {
           select: {
-            username: true,
-            email: true
+            comments: true
           }
         }
       }
     });
     
-    return NextResponse.json(post, { status: 201 });
+    return article;
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to create post' },
-      { status: 500 }
-    );
+    console.error('Error fetching article:', error);
+    return null;
   }
 }
-\\\`\\\`\\\`
 
-## Best Practices
-
-1. **Use Transactions**: For complex operations
-2. **Implement Pagination**: For large datasets
-3. **Add Validation**: Use Zod for input validation
-4. **Error Handling**: Implement proper error handling
-5. **Connection Pooling**: Configure connection limits
-
-## Conclusion
-
-Prisma and SQLite provide a powerful combination for building scalable APIs. The type safety and ease of use make it an excellent choice for modern applications.`,
-    excerpt: "Discover best practices for creating robust database schemas and efficient queries using Prisma ORM with SQLite for your applications.",
-    headerImage: "/api/placeholder/1200/600",
-    views: 856,
-    readTime: 12,
-    createdAt: new Date("2024-01-12"),
-    updatedAt: new Date("2024-01-12"),
-    author: {
-      id: "2",
-      username: "janedoe",
-      email: "jane@example.com"
-    },
-    tags: ["Prisma", "SQLite", "Database", "API", "TypeScript"]
+// Function to get related articles
+async function getRelatedArticles(currentSlug: string, limit: number = 3) {
+  try {
+    const articles = await db.article.findMany({
+      where: {
+        slug: { not: currentSlug },
+        published: true
+      },
+      include: {
+        author: {
+          select: {
+            id: true,
+            username: true,
+            image: true
+          }
+        },
+        tags: {
+          include: {
+            tag: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit
+    });
+    
+    return articles;
+  } catch (error) {
+    console.error('Error fetching related articles:', error);
+    return [];
   }
-];
+}
 
 interface ArticlePageProps {
   params: {
@@ -305,13 +88,7 @@ interface ArticlePageProps {
   };
 }
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }).format(date);
-}
+
 
 function ShareButtons({ title, slug }: { title: string; slug: string }) {
   const url = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/articles/${slug}`;
@@ -363,11 +140,12 @@ function ShareButtons({ title, slug }: { title: string; slug: string }) {
   );
 }
 
-function RelatedArticles({ currentSlug }: { currentSlug: string }) {
-  // Filter out current article and get 3 related articles
-  const relatedArticles = mockArticles
-    .filter(article => article.slug !== currentSlug)
-    .slice(0, 3);
+async function RelatedArticles({ currentSlug }: { currentSlug: string }) {
+  const relatedArticles = await getRelatedArticles(currentSlug, 3);
+
+  if (relatedArticles.length === 0) {
+    return null;
+  }
 
   return (
     <section className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-700">
@@ -391,15 +169,15 @@ function RelatedArticles({ currentSlug }: { currentSlug: string }) {
               <h3 className="font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 mb-2">
                 {article.title}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
-                {article.excerpt}
-              </p>
+              <div className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">
+                {renderHtmlContent(article.excerpt)}
+              </div>
               <div className="flex items-center gap-2 mt-3 text-xs text-gray-500 dark:text-gray-400">
                 <Clock className="h-3 w-3" />
-                <span>{article.readTime} min read</span>
+                <span>{article.readTime || 5} min read</span>
                 <span>•</span>
                 <Eye className="h-3 w-3" />
-                <span>{article.views.toLocaleString()} views</span>
+                <span>{(article.views || 0).toLocaleString()} views</span>
               </div>
             </div>
           </Link>
@@ -412,7 +190,7 @@ function RelatedArticles({ currentSlug }: { currentSlug: string }) {
 export default async function ArticlePage({ params }: ArticlePageProps) {
   // Find the article by slug
   const { slug } = await params;
-  const article = mockArticles.find(a => a.slug === slug);
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     notFound();
@@ -441,13 +219,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Article Header */}
           <header className="mb-8">
             <div className="flex flex-wrap gap-2 mb-4">
-              {article.tags.map((tag) => (
+              {article.tags.map((articleTag) => (
                 <span
-                  key={tag}
+                  key={articleTag.tag.id}
                   className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full"
                 >
                   <Tag className="h-3 w-3" />
-                  {tag}
+                  {articleTag.tag.name}
                 </span>
               ))}
             </div>
@@ -455,6 +233,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
               {article.title}
             </h1>
+            
+            {article.excerpt && (
+              <div className="text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                {renderHtmlContent(article.excerpt)}
+              </div>
+            )}
             
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
               <div className="flex items-center gap-4">
@@ -468,13 +252,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     </p>
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <Calendar className="h-3 w-3" />
-                      <time dateTime={article.createdAt.toISOString()}>
-                        {formatDate(article.createdAt)}
+                      <time dateTime={new Date(article.createdAt).toISOString()}>
+                        {new Date(article.createdAt).toLocaleDateString()}
                       </time>
-                      {article.updatedAt && article.updatedAt > article.createdAt && (
+                      {article.updatedAt && new Date(article.updatedAt) > new Date(article.createdAt) && (
                         <>
                           <span>•</span>
-                          <span>Updated {formatDate(article.updatedAt)}</span>
+                          <span>Updated {new Date(article.updatedAt).toLocaleDateString()}</span>
                         </>
                       )}
                     </div>
@@ -486,11 +270,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                 <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                   <div className="flex items-center gap-1">
                     <Clock className="h-4 w-4" />
-                    <span>{article.readTime} min read</span>
+                    <span>{article.readTime || 5} min read</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Eye className="h-4 w-4" />
-                    <span>{article.views.toLocaleString()} views</span>
+                    <span>{(article.views || 0).toLocaleString()} views</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -504,7 +288,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           {/* Article Content */}
           <article className="prose prose-lg dark:prose-invert max-w-none">
             <ReactMarkdown
-              rehypePlugins={[rehypeHighlight]}
+              rehypePlugins={[rehypeRaw, rehypeHighlight]}
               components={{
                 // Custom components for better styling
                 h1: ({ children }) => (
@@ -595,15 +379,25 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
 // Generate static params for static generation
 export async function generateStaticParams() {
-  return mockArticles.map((article) => ({
-    slug: article.slug,
-  }));
+  try {
+    const articles = await db.article.findMany({
+      where: { published: true },
+      select: { slug: true }
+    });
+    
+    return articles.map((article) => ({
+      slug: article.slug,
+    }));
+  } catch (error) {
+    console.error('Error generating static params:', error);
+    return [];
+  }
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: ArticlePageProps) {
   const { slug } = await params;
-  const article = mockArticles.find(a => a.slug === slug);
+  const article = await getArticleBySlug(slug);
   
   if (!article) {
     return {
@@ -618,10 +412,10 @@ export async function generateMetadata({ params }: ArticlePageProps) {
       title: article.title,
       description: article.excerpt,
       type: 'article',
-      publishedTime: article.createdAt.toISOString(),
-      modifiedTime: article.updatedAt?.toISOString(),
+      publishedTime: new Date(article.createdAt).toISOString(),
+      modifiedTime: article.updatedAt ? new Date(article.updatedAt).toISOString() : undefined,
       authors: [article.author.username],
-      tags: article.tags,
+      tags: article.tags.map(t => t.tag.name),
     },
     twitter: {
       card: 'summary_large_image',

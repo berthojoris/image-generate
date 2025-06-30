@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
 import { db } from '@/lib/db'
 import { ArticleDeleteButton } from '@/components/admin/article-delete-button'
+import { renderHtmlContent } from '@/lib/utils'
 
 interface ArticlesPageProps {
   searchParams: {
@@ -90,7 +91,7 @@ async function ArticlesList({ searchParams }: ArticlesPageProps) {
                           {article.title}
                         </div>
                         <div className="text-sm text-gray-500 truncate max-w-xs">
-                          {article.excerpt || 'No excerpt'}
+                          {article.excerpt ? renderHtmlContent(article.excerpt) : 'No excerpt'}
                         </div>
                       </div>
                     </td>
