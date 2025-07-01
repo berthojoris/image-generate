@@ -27,7 +27,7 @@ export function ThemeToggle() {
         checked={theme === "dark"}
         onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
         className={cn(
-          "w-11 h-6 bg-secondary rounded-full relative",
+          "w-11 h-6 bg-border rounded-full relative border-2 border-border",
           "data-[state=checked]:bg-primary",
           "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
           "transition-colors duration-200"
@@ -35,9 +35,9 @@ export function ThemeToggle() {
       >
         <Switch.Thumb
           className={cn(
-            "block w-5 h-5 bg-background rounded-full shadow-lg",
+            "block w-4 h-4 bg-white dark:bg-gray-900 rounded-full shadow-lg border border-gray-300 dark:border-gray-600",
             "transform transition-transform duration-200",
-            "translate-x-0.5 data-[state=checked]:translate-x-[22px]"
+            "translate-x-1 data-[state=checked]:translate-x-[24px]"
           )}
         />
       </Switch.Root>
