@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -341,16 +342,17 @@ export default function Home() {
                     onDrop={handleDrop}
                   >
                     {uploadedImage ? (
-                      <div className="relative">
-                        <img
+                      <div className="relative w-full h-48">
+                        <Image
                           src={uploadedImage}
                           alt="Uploaded"
-                          className="max-w-full h-48 object-contain mx-auto rounded-lg"
+                          fill
+                          className="object-contain rounded-lg"
                         />
                         <Button
                           variant="destructive"
                           size="sm"
-                          className="absolute top-2 right-2"
+                          className="absolute top-2 right-2 z-10"
                           onClick={() => setUploadedImage(null)}
                         >
                           <X className="h-4 w-4" />
@@ -530,11 +532,12 @@ export default function Home() {
                           </h3>
                           <div className="grid gap-4">
                             {result.images.map((image, index) => (
-                              <div key={index} className="relative group">
-                                <img
+                              <div key={index} className="relative group aspect-video">
+                                <Image
                                   src={image.image_url.url}
                                   alt={`Generated image ${index + 1}`}
-                                  className="w-full rounded-lg shadow-md transition-transform group-hover:scale-[1.02]"
+                                  fill
+                                  className="rounded-lg shadow-md transition-transform group-hover:scale-[1.02] object-cover"
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
                                   <Button
