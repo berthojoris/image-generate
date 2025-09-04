@@ -18,24 +18,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BlogSpace - Modern Blog Platform",
-  description: "A modern blog platform built with Next.js, featuring beautiful design and powerful content management.",
-  keywords: ["blog", "nextjs", "react", "typescript", "tailwind"],
-  authors: [{ name: "BlogSpace Team" }],
-  creator: "BlogSpace",
+  title: "AI Image Generator - Powered by OpenRouter",
+  description: "Generate stunning AI images from text prompts using advanced models like Gemini 2.5 Flash and FLUX.1 Schnell.",
+  keywords: ["ai", "image generation", "nextjs", "react", "typescript", "tailwind", "openrouter", "gemini", "flux"],
+  authors: [{ name: "AI Image Generator Team" }],
+  creator: "AI Image Generator",
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://blogspace.com",
-    title: "BlogSpace - Modern Blog Platform",
-    description: "A modern blog platform built with Next.js, featuring beautiful design and powerful content management.",
-    siteName: "BlogSpace",
+    url: "https://ai-image-generator.com",
+    title: "AI Image Generator - Powered by OpenRouter",
+    description: "Generate stunning AI images from text prompts using advanced models like Gemini 2.5 Flash and FLUX.1 Schnell.",
+    siteName: "AI Image Generator",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BlogSpace - Modern Blog Platform",
-    description: "A modern blog platform built with Next.js, featuring beautiful design and powerful content management.",
-    creator: "@blogspace",
+    title: "AI Image Generator - Powered by OpenRouter",
+    description: "Generate stunning AI images from text prompts using advanced models like Gemini 2.5 Flash and FLUX.1 Schnell.",
+    creator: "@aigenerator",
   },
 };
 
