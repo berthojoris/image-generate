@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Articles", href: "/articles" },
+  { name: "Generate Image", href: "/generate-image" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
@@ -68,7 +69,7 @@ export function Header() {
               </Link>
             )}
             <ThemeToggle />
-            
+
             {status === "loading" ? (
               <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
             ) : session ? (

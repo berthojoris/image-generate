@@ -94,7 +94,7 @@
   - [x] Maintenance mode toggle
 
 ## WYSIWYG Editor Implementation
-- [x] Integrate editor (TipTap or similar)
+- [x] Integrate editor
 - [x] Configure toolbar with:
   - [x] Text formatting
   - [x] Headers
