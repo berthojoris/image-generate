@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -23,6 +23,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { defaultModels } from '@/lib/models';
 
 interface GenerationResult {
   result: string;
@@ -39,16 +40,6 @@ interface GenerationResult {
   };
 }
 
-interface ImageModel {
-  id: string;
-  name: string;
-  description?: string;
-  pricing?: {
-    prompt?: string;
-    completion?: string;
-  };
-}
-
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,37 +49,11 @@ export default function Home() {
   const [result, setResult] = useState<GenerationResult | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [selectedModel, setSelectedModel] = useState('google/gemini-2.5-flash-image-preview:free');
-  const [availableModels, setAvailableModels] = useState<ImageModel[]>([
-    {
-      id: 'google/gemini-2.5-flash-image-preview:free',
-      name: 'Gemini 2.5 Flash Image Preview (free)',
-      description: 'Google\'s advanced image generation model with contextual understanding'
-    },
-    {
-      id: 'black-forest-labs/flux-1-schnell:free',
-      name: 'FLUX.1 Schnell (free)',
-      description: 'Fast and high-quality image generation model by Black Forest Labs'
-    }
-  ]);
+  const availableModels = defaultModels;
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
 
-  // Load available image generation models from OpenRouter
-  useEffect(() => {
-    const loadAvailableModels = async () => {
-      try {
-        const response = await fetch('/api/models');
-        if (response.ok) {
-          const models = await response.json();
-          setAvailableModels(models);
-        }
-      } catch (error) {
-        console.log('Using default models:', error);
-      }
-    };
-
-    loadAvailableModels();
-  }, []);
+  // Models are loaded from the static file - no API loading needed
 
   const handleImageUpload = (file: File) => {
     if (file && file.type.startsWith('image/')) {
