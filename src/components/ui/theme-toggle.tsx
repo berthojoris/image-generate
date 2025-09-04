@@ -3,8 +3,7 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import * as Switch from "@radix-ui/react-switch";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -16,32 +15,23 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 rounded-full" />
+      <Button variant="ghost" size="sm">
+        <Sun className="h-4 w-4" />
+      </Button>
     );
   }
 
   return (
-    <div className="flex items-center space-x-2">
-      <Sun className="h-4 w-4 text-muted-foreground" />
-      <Switch.Root
-        checked={theme === "dark"}
-        onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
-        className={cn(
-          "w-11 h-6 bg-border rounded-full relative border-2 border-border",
-          "data-[state=checked]:bg-primary",
-          "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-          "transition-colors duration-200"
-        )}
-      >
-        <Switch.Thumb
-          className={cn(
-            "block w-4 h-4 bg-white dark:bg-gray-900 rounded-full shadow-lg border border-gray-300 dark:border-gray-600",
-            "transform transition-transform duration-200",
-            "translate-x-1 data-[state=checked]:translate-x-[24px]"
-          )}
-        />
-      </Switch.Root>
-      <Moon className="h-4 w-4 text-muted-foreground" />
-    </div>
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+    >
+      {theme === "dark" ? (
+        <Sun className="h-4 w-4" />
+      ) : (
+        <Moon className="h-4 w-4" />
+      )}
+    </Button>
   );
 }

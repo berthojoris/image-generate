@@ -128,9 +128,10 @@ function ToastContent({ variant = "default", title, description }: ToastContentP
     warning: AlertTriangle,
     info: Info,
     default: null,
+    destructive: AlertCircle,
   };
 
-  const Icon = icons[variant];
+  const Icon = icons[variant] || icons.default;
 
   return (
     <div className="flex items-start space-x-3">

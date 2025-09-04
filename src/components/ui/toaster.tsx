@@ -19,8 +19,8 @@ export function Toaster() {
           <Toast key={id} variant={variant} {...props}>
             <ToastContent
               variant={variant}
-              title={title}
-              description={description}
+              title={title ? String(title) : undefined}
+              description={description ? String(description) : undefined}
             />
             {action}
             <ToastClose />
