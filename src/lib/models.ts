@@ -10,8 +10,8 @@ export interface ImageModel {
 
 export const defaultModels: ImageModel[] = [
   {
-    id: 'google/gemini-2.5-flash-image-preview:free',
-    name: 'Gemini 2.5 Flash Image Preview (free)',
+    id: 'google/gemini-2.5-flash-image-preview',
+    name: 'Gemini 2.5 Flash Image Preview',
     description: 'Google\'s advanced image generation model with contextual understanding'
   },
   {
