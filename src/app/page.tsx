@@ -48,7 +48,7 @@ export default function Home() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<GenerationResult | null>(null);
   const [dragActive, setDragActive] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('google/gemini-2.5-flash-image-preview:free');
+  const [selectedModel, setSelectedModel] = useState('google/gemini-2.5-flash-image-preview');
   const availableModels = defaultModels;
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
@@ -118,11 +118,12 @@ export default function Home() {
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate response');
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
+
+      const data = await response.json();
 
       setResult(data);
       if (data.images && data.images.length > 0) {
@@ -184,6 +185,12 @@ export default function Home() {
     setServiceError(null); // Clear any previous service errors
     try {
       const response = await fetch('/api/test-openrouter');
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
       const result = await response.json();
 
       if (result.status === 'success') {
@@ -194,8 +201,9 @@ export default function Home() {
         }
         toast.error(result.message || 'Connection test failed');
       }
-    } catch {
-      toast.error('Failed to test connection');
+    } catch (error) {
+      console.error('Connection test error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to test connection');
     } finally {
       setIsTestingConnection(false);
     }
