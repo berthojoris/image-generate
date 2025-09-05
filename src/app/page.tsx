@@ -95,6 +95,17 @@ export default function Home() {
     }
   };
 
+  const getImageDimensions = (dataUrl: string): Promise<{ width: number; height: number }> => {
+    return new Promise((resolve, reject) => {
+      const img = new window.Image();
+      img.onload = () => {
+        resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+      img.onerror = reject;
+      img.src = dataUrl;
+    });
+  };
+
   const generateImage = async () => {
     if (!prompt.trim()) {
       toast.error('Please enter a prompt');
@@ -106,13 +117,23 @@ export default function Home() {
     setServiceError(null); // Clear any previous service errors
 
     try {
+      let enhancedPrompt = prompt.trim();
+
+      if (uploadedImage) {
+        const dimensions = await getImageDimensions(uploadedImage);
+        const aspectRatio = dimensions.width / dimensions.height;
+        const orientation = aspectRatio > 1 ? 'landscape' : aspectRatio < 1 ? 'portrait' : 'square';
+
+        enhancedPrompt += ` Generate an image with the same ${orientation} orientation and aspect ratio (${dimensions.width}:${dimensions.height}) as the uploaded image. Preserve the original image quality, do not compress or reduce quality. Maintain the same size proportions and ensure the result looks like a real photo with high fidelity.`;
+      }
+
       const response = await fetch('/api/generate-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt: prompt.trim(),
+          prompt: enhancedPrompt,
           imageUrl: uploadedImage,
           model: selectedModel
         }),
@@ -238,7 +259,7 @@ export default function Home() {
               AI Image Generator
             </h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-              Generate stunning AI images from text prompts or analyze existing images.
+              Generate stunning AI images by analyzing your uploaded images with text prompts.
               Powered by Google&apos;s Gemini 2.5 Flash.
             </p>
             <div className="flex items-center justify-center mt-6 space-x-4">
@@ -298,7 +319,7 @@ export default function Home() {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <ImageIcon className="h-5 w-5 text-violet-600" />
-                    <span>Upload Image (Optional)</span>
+                    <span>Upload Image (Required)</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -422,7 +443,7 @@ export default function Home() {
                     </Label>
                     <Textarea
                       id="prompt"
-                      placeholder="Example: Generate a beautiful sunset over mountains, or describe this uploaded image in detail..."
+                      placeholder="Describe what you want to do with the uploaded image..."
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                       className="mt-2 min-h-[120px] resize-none border-gray-200 dark:border-gray-700 focus:border-violet-500 dark:focus:border-violet-400"
@@ -433,7 +454,7 @@ export default function Home() {
                   <div className="flex space-x-3">
                     <Button
                       onClick={generateImage}
-                      disabled={isGenerating || !prompt.trim()}
+                      disabled={isGenerating || !prompt.trim() || !uploadedImage}
                       className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white"
                       size="lg"
                     >
