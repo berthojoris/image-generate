@@ -49,6 +49,9 @@ export default function Home() {
   const [result, setResult] = useState<GenerationResult | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [selectedModel, setSelectedModel] = useState('google/gemini-2.5-flash-image-preview');
+  const [enhanceSizeAndQuality, setEnhanceSizeAndQuality] = useState(false);
+  const [deepAnalyze, setDeepAnalyze] = useState(false);
+  const [enhancementSuggestions, setEnhancementSuggestions] = useState<string[]>([]);
   const availableModels = defaultModels;
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
@@ -127,6 +130,14 @@ export default function Home() {
         enhancedPrompt += ` Generate an image with the same ${orientation} orientation and aspect ratio (${dimensions.width}:${dimensions.height}) as the uploaded image. Preserve the original image quality, do not compress or reduce quality. Maintain the same size proportions and ensure the result looks like a real photo with high fidelity.`;
       }
 
+      if (enhanceSizeAndQuality) {
+        enhancedPrompt += ' Enhance the image to high definition (HD) quality.';
+      }
+
+      if (deepAnalyze) {
+        enhancedPrompt += ' Analyze the image deeply and suggest enhancements to improve it, like noise reduction or sharpening.';
+      }
+
       const response = await fetch('/api/generate-image', {
         method: 'POST',
         headers: {
@@ -151,6 +162,11 @@ export default function Home() {
         toast.success('Images generated successfully!');
       } else {
         toast.success('Response generated successfully!');
+      }
+
+      if (deepAnalyze && data.result) {
+        const suggestions = data.result.split('\n').filter((s: string) => s.trim().length > 0);
+        setEnhancementSuggestions(suggestions);
       }
     } catch (error) {
       console.error('Generation error:', error);
@@ -239,9 +255,16 @@ export default function Home() {
     setPrompt('');
     setUploadedImage(null);
     setResult(null);
+    setEnhancementSuggestions([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const applyEnhancements = () => {
+    const enhancedPrompt = `${prompt} ${enhancementSuggestions.join(' ')}`;
+    setPrompt(enhancedPrompt);
+    generateImage();
   };
 
   return (
@@ -451,6 +474,20 @@ export default function Home() {
                     />
                   </div>
 
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="enhanceSize" checked={enhanceSizeAndQuality} onChange={(e) => setEnhanceSizeAndQuality(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500" />
+                      <Label htmlFor="enhanceSize" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Enhance size and quality
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <input type="checkbox" id="deepAnalyze" checked={deepAnalyze} onChange={(e) => setDeepAnalyze(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500" />
+                      <Label htmlFor="deepAnalyze" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Deep analyze
+                      </Label>
+                    </div>
+                  </div>
                   <div className="flex space-x-3">
                     <Button
                       onClick={generateImage}
@@ -562,6 +599,30 @@ export default function Home() {
                           </div>
                         </div>
                       )}
+                      {/* Enhancement Suggestions */}
+                      {enhancementSuggestions.length > 0 && (
+                        <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                          <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-3">
+                            Enhancement Suggestions
+                          </h3>
+                          <ul className="list-disc list-inside space-y-2 text-blue-700 dark:text-blue-300 mb-4">
+                            {enhancementSuggestions.map((suggestion, index) => (
+                              <li key={index} className="text-sm leading-relaxed">
+                                {suggestion}
+                              </li>
+                            ))}
+                          </ul>
+                          <Button
+                            onClick={applyEnhancements}
+                            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
+                            disabled={isGenerating}
+                          >
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Yes, Process Enhancement
+                          </Button>
+                        </div>
+                      )}
+
 
                       {result.usage && (
                         <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
