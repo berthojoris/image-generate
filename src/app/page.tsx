@@ -152,11 +152,7 @@ export default function Home() {
 
       if (!response.ok) {
         const errorText = await response.text();
-        let specificError = `HTTP ${response.status}: ${errorText}`;
-        if (response.status === 413) {
-          specificError = 'Request too large. Please upload smaller images (under 4MB) and try again.';
-        }
-        throw new Error(specificError);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
