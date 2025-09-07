@@ -59,7 +59,13 @@ export default function Home() {
   // Models are loaded from the static file - no API loading needed
 
   const handleImageUpload = (file: File) => {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+
     if (file && file.type.startsWith('image/')) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error('File size too large. Please upload an image under 10MB.');
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (e) => {
         setUploadedImage(e.target?.result as string);
