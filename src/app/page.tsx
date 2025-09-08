@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -20,7 +21,8 @@ import {
   Zap,
   Download,
   AlertTriangle,
-  RefreshCw
+  RefreshCw,
+  LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { defaultModels } from '@/lib/models';
@@ -42,6 +44,7 @@ interface GenerationResult {
 
 export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const [prompt, setPrompt] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -55,6 +58,41 @@ export default function Home() {
   const availableModels = defaultModels;
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  // Check authentication immediately on component mount
+  useEffect(() => {
+    const checkAuth = () => {
+      const cookies = document.cookie.split(';');
+      const authCookie = cookies.find(cookie => cookie.trim().startsWith('authenticated='));
+
+      if (!authCookie || authCookie.split('=')[1] !== 'true') {
+        setIsAuthenticated(false);
+        router.push('/login');
+      } else {
+        setIsAuthenticated(true);
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
+  // Don't render anything until authentication is checked
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-300">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not authenticated, don't render the main content
+  if (isAuthenticated === false) {
+    return null;
+  }
 
   // Models are loaded from the static file - no API loading needed
 
@@ -267,6 +305,11 @@ export default function Home() {
     generateImage();
   };
 
+  const handleLogout = () => {
+    document.cookie = 'authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    router.push('/login');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto px-4 py-12">
@@ -293,6 +336,15 @@ export default function Home() {
               <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
                 {availableModels.find(m => m.id === selectedModel)?.name.split('(')[0].trim() || 'Gemini 2.5 Flash'}
               </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="bg-white/80 dark:bg-gray-800/80 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
             </div>
           </div>
 
