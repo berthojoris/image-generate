@@ -47,7 +47,7 @@ export default function Home() {
   const router = useRouter();
 
   const [prompt, setPrompt] = useState('');
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [result, setResult] = useState<GenerationResult | null>(null);
   const [dragActive, setDragActive] = useState(false);
@@ -96,22 +96,34 @@ export default function Home() {
 
   // Models are loaded from the static file - no API loading needed
 
-  const handleImageUpload = (file: File) => {
-    if (file && file.type.startsWith('image/')) {
+  const handleImageUpload = (files: FileList | File[]) => {
+    const fileArray = Array.from(files);
+    const validFiles = fileArray.filter(file => file.type.startsWith('image/'));
+
+    if (validFiles.length === 0) {
+      toast.error('Please upload valid image files');
+      return;
+    }
+
+    if (uploadedImages.length + validFiles.length > 5) {
+      toast.error('Maximum 5 images allowed');
+      return;
+    }
+
+    validFiles.forEach(file => {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setUploadedImage(e.target?.result as string);
+        const dataUrl = e.target?.result as string;
+        setUploadedImages(prev => [...prev, dataUrl]);
       };
       reader.readAsDataURL(file);
-    } else {
-      toast.error('Please upload a valid image file');
-    }
+    });
   };
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleImageUpload(file);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleImageUpload(files);
     }
   };
 
@@ -130,9 +142,9 @@ export default function Home() {
     e.stopPropagation();
     setDragActive(false);
 
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      handleImageUpload(file);
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      handleImageUpload(files);
     }
   };
 
@@ -160,12 +172,18 @@ export default function Home() {
     try {
       let enhancedPrompt = prompt.trim();
 
-      if (uploadedImage) {
-        const dimensions = await getImageDimensions(uploadedImage);
-        const aspectRatio = dimensions.width / dimensions.height;
-        const orientation = aspectRatio > 1 ? 'landscape' : aspectRatio < 1 ? 'portrait' : 'square';
+      if (uploadedImages.length > 0) {
+        // Handle multiple images
+        const imageDescriptions = await Promise.all(
+          uploadedImages.map(async (imageUrl, index) => {
+            const dimensions = await getImageDimensions(imageUrl);
+            const aspectRatio = dimensions.width / dimensions.height;
+            const orientation = aspectRatio > 1 ? 'landscape' : aspectRatio < 1 ? 'portrait' : 'square';
+            return `Image ${index + 1}: ${orientation} orientation (${dimensions.width}:${dimensions.height})`;
+          })
+        );
 
-        enhancedPrompt += ` Generate an image with the same ${orientation} orientation and aspect ratio (${dimensions.width}:${dimensions.height}) as the uploaded image. Preserve the original image quality, do not compress or reduce quality. Maintain the same size proportions and ensure the result looks like a real photo with high fidelity.`;
+        enhancedPrompt += ` Analyze and combine elements from ${uploadedImages.length} uploaded images: ${imageDescriptions.join(', ')}. Generate a cohesive image that preserves the quality and characteristics of all uploaded images. Maintain high fidelity and ensure the result looks like real photos with excellent quality.`;
       }
 
       if (enhanceSizeAndQuality) {
@@ -183,7 +201,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           prompt: enhancedPrompt,
-          imageUrl: uploadedImage,
+          imageUrls: uploadedImages,
           model: selectedModel
         }),
       });
@@ -291,7 +309,7 @@ export default function Home() {
 
   const clearAll = () => {
     setPrompt('');
-    setUploadedImage(null);
+    setUploadedImages([]);
     setResult(null);
     setEnhancementSuggestions([]);
     if (fileInputRef.current) {
@@ -394,7 +412,7 @@ export default function Home() {
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <ImageIcon className="h-5 w-5 text-violet-600" />
-                    <span>Upload Image (Required)</span>
+                    <span>Upload Images (Required - Max 5)</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -410,22 +428,42 @@ export default function Home() {
                     onDragOver={handleDrag}
                     onDrop={handleDrop}
                   >
-                    {uploadedImage ? (
-                      <div className="relative w-full h-48">
-                        <Image
-                          src={uploadedImage}
-                          alt="Uploaded"
-                          fill
-                          className="object-contain rounded-lg"
-                        />
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          className="absolute top-2 right-2 z-10"
-                          onClick={() => setUploadedImage(null)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
+                    {uploadedImages.length > 0 ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {uploadedImages.map((image, index) => (
+                            <div key={index} className="relative group">
+                              <Image
+                                src={image}
+                                alt={`Uploaded ${index + 1}`}
+                                width={150}
+                                height={150}
+                                className="object-cover rounded-lg w-full h-32"
+                              />
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
+                                  setUploadedImages(prev => prev.filter((_, i) => i !== index));
+                                }}
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-center">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setUploadedImages([])}
+                            className="text-red-600 border-red-300 hover:bg-red-50"
+                          >
+                            <X className="h-4 w-4 mr-2" />
+                            Clear All Images
+                          </Button>
+                        </div>
                       </div>
                     ) : (
                       <div className="space-y-4">
@@ -454,6 +492,7 @@ export default function Home() {
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleFileInputChange}
                       className="hidden"
                     />
@@ -543,7 +582,7 @@ export default function Home() {
                   <div className="flex space-x-3">
                     <Button
                       onClick={generateImage}
-                      disabled={isGenerating || !prompt.trim() || !uploadedImage}
+                      disabled={isGenerating || !prompt.trim() || uploadedImages.length === 0}
                       className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white"
                       size="lg"
                     >

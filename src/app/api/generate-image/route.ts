@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, imageUrl, model } = await request.json();
+    const { prompt, imageUrls, model } = await request.json();
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
@@ -30,13 +30,15 @@ export async function POST(request: NextRequest) {
       }
     ];
 
-    // Add image to the content if provided
-    if (imageUrl) {
-      messages[0].content.push({
-        type: 'image_url' as const,
-        image_url: {
-          url: imageUrl
-        }
+    // Add images to the content if provided
+    if (imageUrls && imageUrls.length > 0) {
+      imageUrls.forEach(imageUrl => {
+        messages[0].content.push({
+          type: 'image_url' as const,
+          image_url: {
+            url: imageUrl
+          }
+        });
       });
     }
 
