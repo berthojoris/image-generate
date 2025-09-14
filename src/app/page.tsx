@@ -56,7 +56,6 @@ export default function Home() {
   const [deepAnalyze, setDeepAnalyze] = useState(false);
   const [enhancementSuggestions, setEnhancementSuggestions] = useState<string[]>([]);
   const availableModels = defaultModels;
-  const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [serviceError, setServiceError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
@@ -273,34 +272,6 @@ export default function Home() {
     }
   };
 
-  const testConnection = async () => {
-    setIsTestingConnection(true);
-    setServiceError(null); // Clear any previous service errors
-    try {
-      const response = await fetch('/api/test-openrouter');
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
-      }
-
-      const result = await response.json();
-
-      if (result.status === 'success') {
-        toast.success('OpenRouter connection successful!');
-      } else {
-        if (result.message && result.message.includes('503')) {
-          setServiceError('OpenRouter service is temporarily unavailable. Please try again later.');
-        }
-        toast.error(result.message || 'Connection test failed');
-      }
-    } catch (error) {
-      console.error('Connection test error:', error);
-      toast.error(error instanceof Error ? error.message : 'Failed to test connection');
-    } finally {
-      setIsTestingConnection(false);
-    }
-  };
 
   const retryGeneration = () => {
     setServiceError(null);
@@ -533,23 +504,6 @@ export default function Home() {
                     </Select>
                   </div>
 
-                  <div className="flex justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={testConnection}
-                      disabled={isTestingConnection}
-                    >
-                      {isTestingConnection ? (
-                        <>
-                          <Loader2 className="h-3 w-3 mr-2 animate-spin" />
-                          Testing...
-                        </>
-                      ) : (
-                        'Test Connection'
-                      )}
-                    </Button>
-                  </div>
 
                   <div>
                     <Label htmlFor="prompt" className="text-sm font-medium">

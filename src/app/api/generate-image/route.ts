@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const { prompt, imageUrls, model } = await request.json();
+    const { prompt, imageUrls, model }: { prompt: string; imageUrls?: string[]; model: string } = await request.json();
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
