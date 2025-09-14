@@ -8,8 +8,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
-const navigation = [
-];
+const navigation: { name: string; href: string }[] = [];
 
 export function Header() {
   const router = useRouter();
