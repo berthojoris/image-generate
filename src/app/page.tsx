@@ -78,7 +78,7 @@ export default function Home() {
   // Don't render anything until authentication is checked
   if (isAuthenticated === null) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-300">Checking authentication...</p>
@@ -295,32 +295,21 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center mb-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-r from-violet-500 to-indigo-600 text-white">
-                <Sparkles className="h-8 w-8" />
-              </div>
+          <div className="text-center mb-16">
+            <div className="inline-block rounded-lg bg-primary/10 p-4 mb-4">
+              <Sparkles className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+            <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl">
               AI Image Generator
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
               Generate stunning AI images by analyzing your uploaded images with text prompts.
               Powered by Google&apos;s Gemini 2.5 Flash.
             </p>
-            <div className="flex items-center justify-center mt-6 space-x-4">
-              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                <Zap className="h-3 w-3 mr-1" />
-                Free Model
-              </Badge>
-              <Badge variant="secondary" className="bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200">
-                {availableModels.find(m => m.id === selectedModel)?.name.split('(')[0].trim() || 'Gemini 2.5 Flash'}
-              </Badge>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -365,201 +354,198 @@ export default function Home() {
             )}
             {/* Input Section */}
             <div className="space-y-6">
-              <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <ImageIcon className="h-5 w-5 text-violet-600" />
-                    <span>Upload Images (Required - Max 5)</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div
-                    className={cn(
-                      "border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200",
-                      dragActive
-                        ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
-                        : "border-gray-300 dark:border-gray-600 hover:border-violet-400 dark:hover:border-violet-500"
-                    )}
-                    onDragEnter={handleDrag}
-                    onDragLeave={handleDrag}
-                    onDragOver={handleDrag}
-                    onDrop={handleDrop}
-                  >
-                    {uploadedImages.length > 0 ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                          {uploadedImages.map((image, index) => (
-                            <div key={index} className="relative group">
-                              <Image
-                                src={image}
-                                alt={`Uploaded ${index + 1}`}
-                                width={150}
-                                height={150}
-                                className="object-cover rounded-lg w-full h-32"
-                              />
+              <Card className="w-full">
+                <CardContent className="p-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Image Upload */}
+                    <div className="space-y-4">
+                      <Label className="font-semibold text-lg">Upload Images (Max 5)</Label>
+                      <div
+                        className={cn(
+                          "border-2 border-dashed rounded-lg p-8 text-center transition-all duration-200 h-full flex flex-col justify-center",
+                          dragActive
+                            ? "border-primary bg-primary/10"
+                            : "border-border hover:border-primary/50"
+                        )}
+                        onDragEnter={handleDrag}
+                        onDragLeave={handleDrag}
+                        onDragOver={handleDrag}
+                        onDrop={handleDrop}
+                      >
+                        {uploadedImages.length > 0 ? (
+                          <div className="space-y-4">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                              {uploadedImages.map((image, index) => (
+                                <div key={index} className="relative group">
+                                  <Image
+                                    src={image}
+                                    alt={`Uploaded ${index + 1}`}
+                                    width={150}
+                                    height={150}
+                                    className="object-cover rounded-lg w-full h-28"
+                                  />
+                                  <Button
+                                    variant="destructive"
+                                    size="icon"
+                                    className="absolute top-1 right-1 h-6 w-6 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => {
+                                      setUploadedImages(prev => prev.filter((_, i) => i !== index));
+                                    }}
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                            <div className="flex justify-center space-x-2">
+                               <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => fileInputRef.current?.click()}
+                              >
+                                <Upload className="h-4 w-4 mr-2" />
+                                Add more
+                              </Button>
                               <Button
                                 variant="destructive"
                                 size="sm"
-                                className="absolute top-1 right-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={() => {
-                                  setUploadedImages(prev => prev.filter((_, i) => i !== index));
-                                }}
+                                onClick={() => setUploadedImages([])}
                               >
-                                <X className="h-3 w-3" />
+                                <X className="h-4 w-4 mr-2" />
+                                Clear
                               </Button>
                             </div>
-                          ))}
-                        </div>
-                        <div className="flex justify-center">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setUploadedImages([])}
-                            className="text-red-600 border-red-300 hover:bg-red-50"
-                          >
-                            <X className="h-4 w-4 mr-2" />
-                            Clear All Images
-                          </Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="mx-auto w-16 h-16 bg-violet-100 dark:bg-violet-900/30 rounded-full flex items-center justify-center">
-                          <Upload className="h-8 w-8 text-violet-600" />
-                        </div>
-                        <div>
-                          <p className="text-lg font-medium text-gray-700 dark:text-gray-300">
-                            Drop your image here
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                            or click to browse
-                          </p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="mt-4"
-                        >
-                          <Upload className="h-4 w-4 mr-2" />
-                          Choose Image
-                        </Button>
-                      </div>
-                    )}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handleFileInputChange}
-                      className="hidden"
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Wand2 className="h-5 w-5 text-violet-600" />
-                    <span>Model & Prompt Configuration</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="model" className="text-sm font-medium">
-                      Select AI Model
-                    </Label>
-                    <Select value={selectedModel} onValueChange={setSelectedModel}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select a model" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id}>
-                            <div className="flex flex-col">
-                              <span className="font-medium">{model.name}</span>
-                              {model.description && (
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {model.description}
-                                </span>
-                              )}
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                              <Upload className="h-6 w-6 text-primary" />
                             </div>
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-
-                  <div>
-                    <Label htmlFor="prompt" className="text-sm font-medium">
-                      Describe the image you want to generate or analyze
-                    </Label>
-                    <Textarea
-                      id="prompt"
-                      placeholder="Describe what you want to do with the uploaded image..."
-                      value={prompt}
-                      onChange={(e) => setPrompt(e.target.value)}
-                      className="mt-2 min-h-[120px] resize-none border-gray-200 dark:border-gray-700 focus:border-violet-500 dark:focus:border-violet-400"
-                      disabled={isGenerating}
-                    />
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="enhanceSize" checked={enhanceSizeAndQuality} onChange={(e) => setEnhanceSizeAndQuality(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500" />
-                      <Label htmlFor="enhanceSize" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Enhance size and quality
-                      </Label>
+                            <div>
+                              <p className="font-medium text-foreground">
+                                Drop your images here
+                              </p>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                or click to browse
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              onClick={() => fileInputRef.current?.click()}
+                              className="mt-2"
+                            >
+                              Choose Images
+                            </Button>
+                          </div>
+                        )}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleFileInputChange}
+                          className="hidden"
+                        />
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <input type="checkbox" id="deepAnalyze" checked={deepAnalyze} onChange={(e) => setDeepAnalyze(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500" />
-                      <Label htmlFor="deepAnalyze" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Deep analyze
-                      </Label>
+                    {/* Prompt and Config */}
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="model" className="font-semibold text-lg">
+                          AI Model
+                        </Label>
+                        <Select value={selectedModel} onValueChange={setSelectedModel}>
+                          <SelectTrigger className="mt-2">
+                            <SelectValue placeholder="Select a model" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {availableModels.map((model) => (
+                              <SelectItem key={model.id} value={model.id}>
+                                <div className="flex flex-col">
+                                  <span className="font-medium">{model.name}</span>
+                                  {model.description && (
+                                    <span className="text-xs text-muted-foreground">
+                                      {model.description}
+                                    </span>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="prompt" className="font-semibold text-lg">
+                          Prompt
+                        </Label>
+                        <Textarea
+                          id="prompt"
+                          placeholder="Describe what you want to do with the uploaded images..."
+                          value={prompt}
+                          onChange={(e) => setPrompt(e.target.value)}
+                          className="mt-2 min-h-[120px] resize-y"
+                          disabled={isGenerating}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                         <Label className="font-semibold text-lg">Options</Label>
+                        <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="enhanceSize" checked={enhanceSizeAndQuality} onChange={(e) => setEnhanceSizeAndQuality(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
+                          <Label htmlFor="enhanceSize" className="text-sm font-medium">
+                            Enhance size and quality
+                          </Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <input type="checkbox" id="deepAnalyze" checked={deepAnalyze} onChange={(e) => setDeepAnalyze(e.target.checked)} className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary" />
+                          <Label htmlFor="deepAnalyze" className="text-sm font-medium">
+                            Deep analyze
+                          </Label>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex space-x-3">
-                    <Button
-                      onClick={generateImage}
-                      disabled={isGenerating || !prompt.trim() || uploadedImages.length === 0}
-                      className="flex-1 bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white"
-                      size="lg"
-                    >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="h-4 w-4 mr-2" />
-                          Generate
-                        </>
-                      )}
-                    </Button>
+                  <div className="flex justify-end space-x-3 mt-6">
+                      <Button
+                        onClick={generateImage}
+                        disabled={isGenerating || !prompt.trim() || uploadedImages.length === 0}
+                        className="flex-1 sm:flex-none"
+                        size="lg"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-5 w-5 mr-2" />
+                            Generate
+                          </>
+                        )}
+                      </Button>
 
-                    <Button
-                      variant="outline"
-                      onClick={clearAll}
-                      disabled={isGenerating}
-                      size="lg"
-                    >
-                      <X className="h-4 w-4 mr-2" />
-                      Clear
-                    </Button>
-                  </div>
+                      <Button
+                        variant="outline"
+                        onClick={clearAll}
+                        disabled={isGenerating}
+                        size="lg"
+                        className="flex-1 sm:flex-none"
+                      >
+                        <X className="h-5 w-5 mr-2" />
+                        Clear
+                      </Button>
+                    </div>
                 </CardContent>
               </Card>
             </div>
 
             {/* Output Section */}
             <div className="space-y-6">
-              <Card className="border-0 shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <span className="flex items-center space-x-2">
-                      <Sparkles className="h-5 w-5 text-violet-600" />
+                      <Sparkles className="h-5 w-5 text-primary" />
                       <span>Generated Content</span>
                     </span>
                     {result && (
@@ -569,18 +555,18 @@ export default function Home() {
                         onClick={() => copyToClipboard(result.result)}
                       >
                         <Copy className="h-4 w-4 mr-2" />
-                        Copy
+                        Copy Text
                       </Button>
                     )}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   {isGenerating ? (
-                    <div className="flex items-center justify-center py-12">
+                    <div className="flex items-center justify-center py-20">
                       <div className="text-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-violet-600 mx-auto mb-4" />
-                        <p className="text-gray-500 dark:text-gray-400">
-                          AI is generating your image...
+                        <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
+                        <p className="text-muted-foreground">
+                          AI is working its magic...
                         </p>
                       </div>
                     </div>
@@ -589,22 +575,22 @@ export default function Home() {
                       {/* Generated Images */}
                       {result.images && result.images.length > 0 && (
                         <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                          <h3 className="text-lg font-semibold text-foreground">
                             Generated Images
                           </h3>
-                          <div className="grid gap-4">
+                          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                             {result.images.map((image, index) => (
-                              <div key={index} className="relative group aspect-video">
+                              <div key={index} className="relative group aspect-square">
                                 <Image
                                   src={image.image_url.url}
                                   alt={`Generated image ${index + 1}`}
                                   fill
                                   className="rounded-lg shadow-md transition-transform group-hover:scale-[1.02] object-cover"
                                 />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
                                   <Button
                                     onClick={() => downloadImage(image.image_url.url, index)}
-                                    className="bg-white/90 text-gray-800 hover:bg-white border-0 shadow-lg"
+                                    className="bg-white/90 text-gray-800 hover:bg-white"
                                     size="sm"
                                   >
                                     <Download className="h-4 w-4 mr-2" />
@@ -619,14 +605,14 @@ export default function Home() {
 
                       {/* Generated Text */}
                       {result.result && (
-                        <div className="space-y-4">
-                          <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                        <div className="space-y-2">
+                          <h3 className="text-lg font-semibold text-foreground">
                             Generated Description
                           </h3>
-                          <div className="prose dark:prose-invert max-w-none">
-                            <div className="whitespace-pre-wrap text-gray-700 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                          <div className="prose dark:prose-invert max-w-none text-muted-foreground">
+                            <p className="whitespace-pre-wrap leading-relaxed">
                               {result.result}
-                            </div>
+                            </p>
                           </div>
                         </div>
                       )}
@@ -656,40 +642,25 @@ export default function Home() {
 
 
                       {result.usage && (
-                        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 font-medium">
-                            Token Usage:
+                        <div className="mt-6 pt-4 border-t">
+                          <p className="text-xs text-muted-foreground mb-2 font-medium">
+                            Token Usage
                           </p>
-                          <div className="grid grid-cols-3 gap-4 text-xs">
-                            <div className="text-center">
-                              <div className="font-semibold text-gray-700 dark:text-gray-300">
-                                {result.usage.prompt_tokens}
-                              </div>
-                              <div className="text-gray-500 dark:text-gray-400">Prompt</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="font-semibold text-gray-700 dark:text-gray-300">
-                                {result.usage.completion_tokens}
-                              </div>
-                              <div className="text-gray-500 dark:text-gray-400">Response</div>
-                            </div>
-                            <div className="text-center">
-                              <div className="font-semibold text-violet-600">
-                                {result.usage.total_tokens}
-                              </div>
-                              <div className="text-gray-500 dark:text-gray-400">Total</div>
-                            </div>
+                          <div className="flex space-x-4 text-xs">
+                              <p><span className="font-semibold text-foreground">{result.usage.prompt_tokens}</span> Prompt</p>
+                              <p><span className="font-semibold text-foreground">{result.usage.completion_tokens}</span> Response</p>
+                              <p><span className="font-semibold text-primary">{result.usage.total_tokens}</span> Total</p>
                           </div>
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="text-center py-12">
-                      <div className="mx-auto w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                        <ImageIcon className="h-8 w-8 text-gray-400" />
+                    <div className="text-center py-20">
+                      <div className="mx-auto w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                        <ImageIcon className="h-8 w-8 text-muted-foreground" />
                       </div>
-                      <p className="text-gray-500 dark:text-gray-400">
-                        Your generated images and descriptions will appear here
+                      <p className="text-muted-foreground">
+                        Your generated images and descriptions will appear here.
                       </p>
                     </div>
                   )}
