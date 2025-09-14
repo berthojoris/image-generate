@@ -2,16 +2,22 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Menu, X, Sparkles } from "lucide-react";
+import { Sparkles, LogOut } from "lucide-react";
 import * as NavigationMenu from "@radix-ui/react-navigation-menu";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const navigation = [
-  { name: "Home", href: "/" },
 ];
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const router = useRouter();
+
+  const handleLogout = () => {
+    document.cookie = 'authenticated=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    router.push('/login');
+  };
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border backdrop-blur-md shadow-sm" style={{backgroundColor: 'var(--header-bg)'}}>
@@ -45,42 +51,22 @@ export function Header() {
             </NavigationMenu.List>
           </NavigationMenu.Root>
 
-          {/* Right side - Theme toggle only */}
+          {/* Right side - Theme toggle and Logout button */}
           <div className="flex items-center space-x-4">
             <ThemeToggle />
-
-            {/* Mobile menu button */}
-            <button
-              type="button"
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="bg-white/80 dark:bg-gray-800/80 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
-              {mobileMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
-            </button>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+
           </div>
         </div>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden">
-            <div className="space-y-1 pb-3 pt-2">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="block px-3 py-2 text-base font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );
